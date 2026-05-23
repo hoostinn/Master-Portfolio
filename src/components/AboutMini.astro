@@ -1,0 +1,106 @@
+---
+const whatIDo = [
+  {
+    icon: '🛠',
+    label: 'Build AI-Assisted Tools',
+    desc: 'Ship software that uses AI and automation to reduce manual work and improve how people work',
+  },
+  {
+    icon: '🖥',
+    label: 'Develop Full-Stack Applications',
+    desc: 'End-to-end from database to UI, across desktop and web platforms',
+  },
+  {
+    icon: '⚙️',
+    label: 'Automate Workflows',
+    desc: 'Identify inefficiencies and replace them with scripts, pipelines, and systems that scale',
+  },
+  {
+    icon: '👥',
+    label: 'Lead and Ship as a Team',
+    desc: 'Coordinate engineers, manage GitHub workflows, and bring projects from idea to production',
+  },
+] as const;
+
+const techStack = [
+  {
+    category: 'Frontend & Desktop',
+    items: ['React', 'Electron', 'TypeScript', 'JavaScript', 'HTML', 'CSS', 'Tailwind CSS', 'Figma'],
+  },
+  {
+    category: 'Backend & Databases',
+    items: ['Python', 'Spring Boot', 'PostgreSQL', 'MongoDB', 'Node.js', 'Supabase', 'REST APIs'],
+  },
+  {
+    category: 'DevOps & Cloud',
+    items: ['AWS', 'Docker', 'GitHub Actions', 'CI/CD', 'Vercel', 'Git'],
+  },
+  {
+    category: 'AI & Automation',
+    items: [
+      'Claude API',
+      'Anthropic SDK',
+      'Agentic Workflows',
+      'LLM API Integration',
+      'Prompt Engineering',
+      'Tool Use / Function Calling',
+      'GitHub Copilot',
+    ],
+  },
+  {
+    category: 'Testing & Tools',
+    items: ['Jest', 'Postman', 'FFmpeg', 'OCR', 'BeautifulSoup'],
+  },
+] as const;
+---
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8 fade-in">
+
+  <!-- What I Do -->
+  <section aria-labelledby="what-i-do-heading">
+    <h2
+      id="what-i-do-heading"
+      class="text-xs font-semibold uppercase tracking-widest text-text-faint dark:text-dark-text-faint mb-5"
+    >
+      What I Do
+    </h2>
+
+    <ul class="space-y-5 list-none p-0 m-0" role="list">
+      {whatIDo.map(({ icon, label, desc }) => (
+        <li class="flex gap-3">
+          <span class="text-xl leading-none mt-0.5 flex-shrink-0" aria-hidden="true">{icon}</span>
+          <div>
+            <p class="font-semibold text-text dark:text-dark-text text-sm leading-snug">{label}</p>
+            <p class="text-sm text-text-muted dark:text-dark-text-muted mt-0.5 leading-relaxed">{desc}</p>
+          </div>
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <!-- Tech Stack -->
+  <section aria-labelledby="tech-stack-heading">
+    <h2
+      id="tech-stack-heading"
+      class="text-xs font-semibold uppercase tracking-widest text-text-faint dark:text-dark-text-faint mb-5"
+    >
+      Tech Stack
+    </h2>
+
+    <div class="space-y-4">
+      {techStack.map(({ category, items }) => (
+        <div>
+          <p class="text-xs font-semibold text-primary dark:text-dark-primary mb-2">{category}</p>
+          <div class="flex flex-wrap gap-1.5">
+            {items.map((item) => (
+              <span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-medium bg-surface-alt dark:bg-dark-surface-alt text-text dark:text-dark-text border border-border dark:border-dark-border">
+                {item}
+              </span>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+</div>
