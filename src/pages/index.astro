@@ -9,20 +9,20 @@ const featured = allProjects
 
 const [hero, ...grid] = featured;
 
-// Core stack shown in the skills strip — most recognizable / differentiating
-const coreSkills = [
-  { label: 'React',          group: 'frontend' },
-  { label: 'Electron',       group: 'frontend' },
-  { label: 'TypeScript',     group: 'frontend' },
-  { label: 'Tailwind CSS',   group: 'frontend' },
-  { label: 'Python',         group: 'backend'  },
-  { label: 'PostgreSQL',     group: 'backend'  },
-  { label: 'Node.js',        group: 'backend'  },
-  { label: 'Claude API',     group: 'ai'       },
-  { label: 'Anthropic SDK',  group: 'ai'       },
-  { label: 'AWS',            group: 'infra'    },
-  { label: 'Docker',         group: 'infra'    },
-  { label: 'GitHub Actions', group: 'infra'    },
+// Grouped for scannable column layout — replaces pill soup
+const stackGroups = [
+  {
+    label: 'Frontend + Desktop',
+    items: ['React', 'Electron', 'TypeScript', 'Tailwind CSS', 'Figma'],
+  },
+  {
+    label: 'AI & Automation',
+    items: ['Claude API', 'Anthropic SDK', 'LLM API Integration', 'Prompt Engineering', 'Tool Use / Function Calling'],
+  },
+  {
+    label: 'Backend + Cloud',
+    items: ['Python', 'PostgreSQL', 'Node.js', 'AWS', 'Docker', 'GitHub Actions'],
+  },
 ] as const;
 ---
 
@@ -34,70 +34,80 @@ const coreSkills = [
   <!-- ── Hero ──────────────────────────────────────────────────────── -->
   <section
     aria-label="Introduction"
-    class="mx-auto max-w-5xl px-6 pt-28 pb-20 sm:pt-36 sm:pb-24"
+    class="hero-section relative overflow-hidden"
   >
-    <p class="text-sm font-semibold uppercase tracking-widest text-primary dark:text-dark-primary mb-4">
-      Available for new roles
-    </p>
+    <!-- Dot-grid texture — gives the blank field presence without decoration -->
+    <div class="hero-dots" aria-hidden="true"></div>
 
-    <h1 class="text-5xl sm:text-6xl lg:text-7xl font-bold text-text dark:text-dark-text leading-[1.08] tracking-tight mb-6">
-      Justin Park
-    </h1>
+    <div class="relative mx-auto max-w-5xl px-6 pt-36 pb-28 sm:pt-44 sm:pb-36">
 
-    <p class="text-xl sm:text-2xl text-text-muted dark:text-dark-text-muted max-w-2xl leading-relaxed mb-10">
-      Software engineer building developer tools and AI-assisted products.
-    </p>
+      <!-- Eyebrow: specific, not generic -->
+      <p class="font-mono text-xs tracking-[0.18em] uppercase text-text-faint dark:text-dark-text-faint mb-10">
+        Engineering Intern · Facilitron
+      </p>
 
-    <div class="flex flex-wrap gap-4">
-      <a
-        href="/projects"
-        class="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-accent hover:bg-accent-hover dark:bg-dark-accent dark:hover:bg-dark-accent-hover text-text font-semibold transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-      >
-        View Projects
-        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-        </svg>
-      </a>
-      <a
-        href="/contact"
-        class="inline-flex items-center gap-2 px-6 py-3 rounded-lg border border-border dark:border-dark-border text-text-muted dark:text-dark-text-muted hover:text-text dark:hover:text-dark-text hover:border-primary dark:hover:border-dark-primary font-semibold transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-      >
-        Contact Me
-      </a>
+      <!-- Name: dominant at extreme scale -->
+      <h1 class="text-6xl sm:text-7xl lg:text-8xl font-bold text-text dark:text-dark-text leading-none tracking-tighter mb-8">
+        Justin Park
+      </h1>
+
+      <!-- Tagline: recedes in weight to let the name lead -->
+      <p class="text-xl sm:text-2xl text-text-muted dark:text-dark-text-muted max-w-lg leading-relaxed mb-12">
+        Software engineer building developer tools and AI-assisted products.
+      </p>
+
+      <div class="flex flex-wrap gap-4">
+        <a
+          href="/projects"
+          class="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-accent hover:bg-accent-hover dark:bg-dark-accent dark:hover:bg-dark-accent-hover text-text font-semibold transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+        >
+          View Projects
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+          </svg>
+        </a>
+        <a
+          href="/contact"
+          class="inline-flex items-center gap-2 px-6 py-3 rounded-lg border border-border dark:border-dark-border text-text-muted dark:text-dark-text-muted hover:text-text dark:hover:text-dark-text hover:border-primary dark:hover:border-dark-primary font-semibold transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+        >
+          Contact Me
+        </a>
+      </div>
+
     </div>
   </section>
 
-  <!-- ── Skills strip ──────────────────────────────────────────────── -->
+  <!-- ── Skills — 3-column grouped, replaces pill soup ─────────────── -->
   <section
     aria-labelledby="skills-heading"
-    class="border-y border-border dark:border-dark-border bg-surface-alt dark:bg-dark-surface-alt py-10"
+    class="border-y border-border dark:border-dark-border bg-surface-alt dark:bg-dark-surface-alt py-12"
   >
     <div class="mx-auto max-w-5xl px-6">
       <p
         id="skills-heading"
-        class="text-xs font-semibold uppercase tracking-widest text-text-faint dark:text-dark-text-faint mb-5"
+        class="text-xs font-semibold uppercase tracking-widest text-text-faint dark:text-dark-text-faint mb-8"
       >
         Core Stack
       </p>
-      <div class="flex flex-wrap gap-2" role="list" aria-label="Core technologies">
-        {coreSkills.map(({ label, group }) => (
-          <span
-            role="listitem"
-            class:list={[
-              'inline-block px-3 py-1 rounded-full text-sm font-medium border transition-colors duration-200',
-              group === 'ai'
-                ? 'bg-primary-muted dark:bg-dark-surface-alt text-text dark:text-dark-text border-primary/40 dark:border-dark-primary/40'
-                : 'bg-surface dark:bg-dark-surface text-text dark:text-dark-text border-border dark:border-dark-border',
-            ]}
-          >
-            {label}
-          </span>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-8 sm:gap-12">
+        {stackGroups.map(({ label, items }) => (
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-wider text-primary dark:text-dark-primary mb-3">
+              {label}
+            </p>
+            <ul class="space-y-2 list-none p-0 m-0" role="list">
+              {items.map((item) => (
+                <li class="text-sm text-text-muted dark:text-dark-text-muted">{item}</li>
+              ))}
+            </ul>
+          </div>
         ))}
       </div>
     </div>
   </section>
 
-  <!-- ── Featured work preview ─────────────────────────────────────── -->
+  <!-- ── Selected Work ─────────────────────────────────────────────── -->
   <section
     aria-labelledby="work-heading"
     class="mx-auto max-w-5xl px-6 py-20"
@@ -117,12 +127,14 @@ const coreSkills = [
       </a>
     </div>
 
-    <!-- OTTER — large featured preview -->
+    <!-- OTTER: sage-tinted background signals "featured" through color, not just size -->
     {hero && (
-      <article class="mb-8 rounded-2xl border border-border dark:border-dark-border bg-surface dark:bg-dark-surface overflow-hidden fade-in">
+      <article
+        class="mb-8 rounded-2xl bg-primary-muted dark:bg-dark-surface-alt border border-primary/25 dark:border-dark-primary/25 overflow-hidden fade-in"
+      >
         <div class="p-8 sm:p-10">
           <div class="flex flex-wrap items-center gap-2 mb-4">
-            <span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold uppercase tracking-wide bg-primary-muted dark:bg-dark-surface-alt text-text dark:text-dark-primary border border-primary dark:border-dark-primary">
+            <span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold uppercase tracking-wide bg-surface/80 dark:bg-dark-surface text-text dark:text-dark-primary border border-primary/30 dark:border-dark-primary/40">
               Shipped
             </span>
             <span class="text-xs font-medium text-text-faint dark:text-dark-text-faint uppercase tracking-wide">
@@ -133,7 +145,7 @@ const coreSkills = [
           <h3 class="text-2xl sm:text-3xl font-bold text-text dark:text-dark-text mb-1 leading-tight">
             {hero.data.title}
           </h3>
-          <p class="text-sm font-medium text-primary dark:text-dark-primary mb-0.5">
+          <p class="text-sm font-medium text-primary-hover dark:text-dark-primary mb-0.5">
             {hero.data.role}
           </p>
           {hero.data.team && (
@@ -148,25 +160,26 @@ const coreSkills = [
 
           <div class="flex flex-wrap gap-2 mb-8">
             {hero.data.stack.map((s) => (
-              <span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-medium bg-surface-alt dark:bg-dark-surface-alt text-text dark:text-dark-text border border-border dark:border-dark-border">
+              <span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-medium bg-surface/80 dark:bg-dark-surface text-text dark:text-dark-text border border-primary/20 dark:border-dark-border">
                 {s}
               </span>
             ))}
           </div>
 
           <div class="flex flex-wrap gap-3">
+            <!-- Fixed: was "See full case study" which misled to a list page -->
             <a
               href="/projects"
               class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-accent hover:bg-accent-hover dark:bg-dark-accent dark:hover:bg-dark-accent-hover text-text font-semibold text-sm transition-colors duration-200"
             >
-              See full case study
+              View Projects
             </a>
             {hero.data.github && (
               <a
                 href={hero.data.github}
                 target="_blank"
                 rel="noopener noreferrer"
-                class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg border border-border dark:border-dark-border text-sm font-medium text-text-muted dark:text-dark-text-muted hover:text-text dark:hover:text-dark-text hover:border-primary dark:hover:border-dark-primary transition-colors duration-200"
+                class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg border border-primary/30 dark:border-dark-border text-sm font-medium text-text-muted dark:text-dark-text-muted hover:text-text dark:hover:text-dark-text hover:border-primary dark:hover:border-dark-primary transition-colors duration-200"
               >
                 <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                   <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844a9.59 9.59 0 0 1 2.504.337c1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.02 10.02 0 0 0 22 12.017C22 6.484 17.522 2 12 2z" />
@@ -179,12 +192,12 @@ const coreSkills = [
       </article>
     )}
 
-    <!-- Grid: remaining featured projects -->
+    <!-- Grid: remaining projects — transition-all narrowed to transition-colors -->
     {grid.length > 0 && (
       <ul class="grid grid-cols-1 sm:grid-cols-2 gap-6 list-none p-0 m-0" role="list">
         {grid.map((p) => (
           <li class="fade-in flex">
-            <article class="flex flex-col flex-1 rounded-2xl border border-border dark:border-dark-border bg-surface dark:bg-dark-surface p-6 hover:border-primary dark:hover:border-dark-primary hover:shadow-md transition-all duration-200">
+            <article class="flex flex-col flex-1 rounded-2xl border border-border dark:border-dark-border bg-surface dark:bg-dark-surface p-6 hover:border-primary dark:hover:border-dark-primary hover:shadow-md transition-colors duration-200">
               <div class="flex items-start justify-between gap-3 mb-2">
                 <h3 class="text-lg font-bold text-text dark:text-dark-text leading-snug">
                   {p.data.title}
@@ -216,19 +229,35 @@ const coreSkills = [
       </ul>
     )}
 
-    <!-- Bottom CTA -->
-    <div class="mt-10 text-center fade-in">
-      <a
-        href="/projects"
-        class="inline-flex items-center gap-2 px-6 py-3 rounded-lg border border-border dark:border-dark-border text-text-muted dark:text-dark-text-muted hover:text-text dark:hover:text-dark-text hover:border-primary dark:hover:border-dark-primary font-medium transition-colors duration-200"
-      >
-        View all projects with full details
-        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-        </svg>
-      </a>
-    </div>
+    <!-- Redundant bottom CTA removed — "View all →" in heading is sufficient -->
 
   </section>
 
 </BaseLayout>
+
+<style>
+  /* Subtle dot-grid gives the hero field texture without decoration */
+  .hero-dots {
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(
+      circle,
+      oklch(77% 0.05 155 / 0.14) 1px,
+      transparent 1px
+    );
+    background-size: 28px 28px;
+    pointer-events: none;
+  }
+
+  .dark .hero-dots {
+    background-image: radial-gradient(
+      circle,
+      oklch(72% 0.05 155 / 0.07) 1px,
+      transparent 1px
+    );
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    /* No motion in hero; rule present for future additions */
+  }
+</style>
