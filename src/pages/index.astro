@@ -9,7 +9,6 @@ const featured = allProjects
 
 const [hero, ...grid] = featured;
 
-// Grouped for scannable column layout — replaces pill soup
 const stackGroups = [
   {
     label: 'Frontend + Desktop',
@@ -24,6 +23,13 @@ const stackGroups = [
     items: ['Python', 'PostgreSQL', 'Node.js', 'AWS', 'Docker', 'GitHub Actions'],
   },
 ] as const;
+
+// OTTER waveform visualization — simulated audio amplitude (px, max 40)
+const waveHeights = [
+   8, 12, 20, 16, 26, 32, 28, 36, 32, 38, 40, 36, 28, 38,
+  40, 34, 30, 34, 26, 32, 28, 24, 18, 26, 20, 16, 22, 16, 12, 10,  8,  6,
+];
+const playheadAt = 14; // bar index where playhead sits
 ---
 
 <BaseLayout
@@ -31,53 +37,161 @@ const stackGroups = [
   description="Software engineer building developer tools and AI-assisted products. React, Electron, TypeScript, Python, Claude API."
 >
 
-  <!-- ── Hero ──────────────────────────────────────────────────────── -->
-  <section
-    aria-label="Introduction"
-    class="hero-section relative overflow-hidden"
-  >
-    <!-- Dot-grid texture — gives the blank field presence without decoration -->
+  <!-- Grain overlay: fixed, pointer-events-none, never on scrolling content -->
+  <div class="grain" aria-hidden="true"></div>
+
+  <!-- ── Hero ──────────────────────────────────────────────────────────── -->
+  <section aria-label="Introduction" class="hero-section relative overflow-hidden">
+
+    <!-- Ambient orb — sage, top-right -->
+    <div class="hero-orb-sage" aria-hidden="true"></div>
+    <!-- Ambient orb — peach, bottom-left -->
+    <div class="hero-orb-peach" aria-hidden="true"></div>
+    <!-- Dot grid -->
     <div class="hero-dots" aria-hidden="true"></div>
 
-    <div class="relative mx-auto max-w-5xl px-6 pt-36 pb-28 sm:pt-44 sm:pb-36">
+    <div class="relative mx-auto max-w-5xl px-6 py-32 sm:py-40">
+      <div class="flex flex-col lg:flex-row items-center gap-16 lg:gap-10">
 
-      <!-- Eyebrow: specific, not generic -->
-      <p class="font-mono text-xs tracking-[0.18em] uppercase text-text-faint dark:text-dark-text-faint mb-10">
-        Engineering Intern · Facilitron
-      </p>
+        <!-- Left: text -->
+        <div class="flex-1 min-w-0 lg:pr-4">
 
-      <!-- Name: dominant at extreme scale -->
-      <h1 class="text-6xl sm:text-7xl lg:text-8xl font-bold text-text dark:text-dark-text leading-none tracking-tighter mb-8">
-        Justin Park
-      </h1>
+          <!-- Eyebrow pill -->
+          <div class="reveal mb-10">
+            <span class="inline-flex items-center px-3 py-1 rounded-full bg-primary-muted dark:bg-dark-surface-alt border border-primary/25 dark:border-dark-primary/25 text-[10px] uppercase tracking-[0.2em] font-semibold text-primary dark:text-dark-primary">
+              Engineering Intern · Facilitron
+            </span>
+          </div>
 
-      <!-- Tagline: recedes in weight to let the name lead -->
-      <p class="text-xl sm:text-2xl text-text-muted dark:text-dark-text-muted max-w-lg leading-relaxed mb-12">
-        Software engineer building developer tools and AI-assisted products.
-      </p>
+          <!-- Name — dominant scale -->
+          <h1
+            class="reveal text-6xl sm:text-7xl lg:text-8xl font-bold text-text dark:text-dark-text leading-none tracking-tighter mb-8"
+            style="transition-delay: 80ms"
+          >
+            Justin Park
+          </h1>
 
-      <div class="flex flex-wrap gap-4">
-        <a
-          href="/projects"
-          class="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-accent hover:bg-accent-hover dark:bg-dark-accent dark:hover:bg-dark-accent-hover text-text font-semibold transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-        >
-          View Projects
-          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-          </svg>
-        </a>
-        <a
-          href="/contact"
-          class="inline-flex items-center gap-2 px-6 py-3 rounded-lg border border-border dark:border-dark-border text-text-muted dark:text-dark-text-muted hover:text-text dark:hover:text-dark-text hover:border-primary dark:hover:border-dark-primary font-semibold transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-        >
-          Contact Me
-        </a>
+          <!-- Tagline — recedes to let name lead -->
+          <p
+            class="reveal text-xl sm:text-2xl text-text-muted dark:text-dark-text-muted max-w-lg leading-relaxed mb-12"
+            style="transition-delay: 160ms"
+          >
+            Software engineer building developer tools and AI-assisted products.
+          </p>
+
+          <!-- CTAs — Button-in-Button pattern -->
+          <div class="reveal flex flex-wrap gap-4" style="transition-delay: 240ms">
+
+            <!-- Primary: peach pill with nested icon -->
+            <a
+              href="/projects"
+              class="group inline-flex items-center gap-3 px-5 py-3 rounded-full bg-accent hover:bg-accent-hover dark:bg-dark-accent dark:hover:bg-dark-accent-hover text-text font-semibold text-sm active:scale-[0.98] transition-[transform,background-color] duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+            >
+              View Projects
+              <span class="w-7 h-7 rounded-full bg-text/10 flex items-center justify-center group-hover:translate-x-0.5 group-hover:-translate-y-px transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]" aria-hidden="true">
+                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </svg>
+              </span>
+            </a>
+
+            <!-- Ghost pill -->
+            <a
+              href="/contact"
+              class="inline-flex items-center px-5 py-3 rounded-full border border-border dark:border-dark-border text-text-muted dark:text-dark-text-muted hover:text-text dark:hover:text-dark-text hover:border-primary dark:hover:border-dark-primary font-semibold text-sm active:scale-[0.98] transition-[transform,color,border-color] duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+            >
+              Contact Me
+            </a>
+
+          </div>
+        </div>
+
+        <!-- Right: OTTER app window — desktop only -->
+        <div class="reveal hidden lg:flex w-[340px] xl:w-[380px] flex-shrink-0" style="transition-delay: 120ms">
+
+          <!-- Double-bezel outer shell -->
+          <div class="w-full p-1.5 rounded-[1.5rem] ring-1 ring-primary/15 dark:ring-dark-primary/15 bg-primary/5 dark:bg-dark-primary/5 shadow-[0_32px_72px_-8px_rgba(168,195,176,0.22)] dark:shadow-[0_32px_72px_-8px_rgba(0,0,0,0.5)]">
+            <!-- Inner core -->
+            <div class="rounded-[calc(1.5rem-0.375rem)] bg-surface dark:bg-dark-surface overflow-hidden shadow-[inset_0_1px_0_rgba(255,255,255,0.6)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
+
+              <!-- Window chrome -->
+              <div class="flex items-center gap-1.5 px-4 py-3 bg-surface-alt dark:bg-dark-surface-alt border-b border-border dark:border-dark-border">
+                <span class="w-2.5 h-2.5 rounded-full bg-accent dark:bg-dark-accent"></span>
+                <span class="w-2.5 h-2.5 rounded-full bg-primary-muted dark:bg-dark-primary-muted"></span>
+                <span class="w-2.5 h-2.5 rounded-full bg-border dark:bg-dark-border"></span>
+                <span class="ml-auto font-mono text-[10px] tracking-wide text-text-faint dark:text-dark-text-faint">
+                  session_recording.wav
+                </span>
+              </div>
+
+              <!-- Waveform -->
+              <div class="px-4 pt-4 pb-3 border-b border-border dark:border-dark-border">
+                <div class="flex items-end gap-[3px] h-10 relative">
+                  {waveHeights.map((h, i) => (
+                    <div
+                      class:list={[
+                        'flex-shrink-0 rounded-full',
+                        'w-[3px]',
+                        i < playheadAt
+                          ? 'bg-primary dark:bg-dark-primary'
+                          : 'bg-border dark:bg-dark-border',
+                      ]}
+                      style={`height: ${h}px`}
+                    ></div>
+                  ))}
+                  <!-- Playhead line -->
+                  <div
+                    class="absolute top-0 bottom-0 w-px bg-accent dark:bg-dark-accent"
+                    style={`left: ${playheadAt * 6 - 1}px`}
+                    aria-hidden="true"
+                  ></div>
+                </div>
+                <div class="flex justify-between mt-2">
+                  <span class="font-mono text-[9px] text-primary dark:text-dark-primary">0:14</span>
+                  <span class="font-mono text-[9px] text-text-faint dark:text-dark-text-faint">0:32</span>
+                </div>
+              </div>
+
+              <!-- Transcript -->
+              <div class="px-4 py-4 space-y-3">
+
+                <div>
+                  <p class="font-mono text-[9px] uppercase tracking-wide text-primary dark:text-dark-primary mb-1">
+                    Speaker 1 · 00:11
+                  </p>
+                  <p class="text-[12px] font-medium text-text dark:text-dark-text leading-relaxed">
+                    "The waveform editor was always<br />the bottleneck."
+                  </p>
+                </div>
+
+                <!-- Active edit line: highlight + strikethrough -->
+                <div class="rounded-lg bg-primary-muted/50 dark:bg-dark-surface-alt px-3 py-2.5 ring-1 ring-primary/15 dark:ring-dark-primary/15">
+                  <p class="font-mono text-[9px] uppercase tracking-wide text-text-faint dark:text-dark-text-faint mb-1">
+                    Editing · 00:11
+                  </p>
+                  <p class="text-[12px] text-text-muted dark:text-dark-text-muted leading-relaxed">
+                    "The waveform editor was always<br />the <span class="line-through decoration-accent/70 dark:decoration-dark-accent/70">bottleneck</span> solution."
+                  </p>
+                </div>
+
+                <!-- Status indicator -->
+                <div class="flex items-center gap-2 pt-0.5">
+                  <span class="w-1.5 h-1.5 rounded-full bg-primary dark:bg-dark-primary flex-shrink-0"></span>
+                  <span class="font-mono text-[9px] text-text-faint dark:text-dark-text-faint">
+                    word-level audio sync · local-first
+                  </span>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
-
     </div>
   </section>
 
-  <!-- ── Skills — 3-column grouped, replaces pill soup ─────────────── -->
+  <!-- ── Core Stack ─────────────────────────────────────────────────────── -->
   <section
     aria-labelledby="skills-heading"
     class="border-y border-border dark:border-dark-border bg-surface-alt dark:bg-dark-surface-alt py-12"
@@ -85,15 +199,14 @@ const stackGroups = [
     <div class="mx-auto max-w-5xl px-6">
       <p
         id="skills-heading"
-        class="text-xs font-semibold uppercase tracking-widest text-text-faint dark:text-dark-text-faint mb-8"
+        class="text-[10px] font-semibold uppercase tracking-[0.2em] text-text-faint dark:text-dark-text-faint mb-8"
       >
         Core Stack
       </p>
-
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-8 sm:gap-12">
         {stackGroups.map(({ label, items }) => (
           <div>
-            <p class="text-xs font-semibold uppercase tracking-wider text-primary dark:text-dark-primary mb-3">
+            <p class="text-[10px] font-semibold uppercase tracking-wider text-primary dark:text-dark-primary mb-3">
               {label}
             </p>
             <ul class="space-y-2 list-none p-0 m-0" role="list">
@@ -107,136 +220,203 @@ const stackGroups = [
     </div>
   </section>
 
-  <!-- ── Selected Work ─────────────────────────────────────────────── -->
-  <section
-    aria-labelledby="work-heading"
-    class="mx-auto max-w-5xl px-6 py-20"
-  >
-    <div class="flex items-baseline justify-between gap-4 mb-10 fade-in">
-      <h2
-        id="work-heading"
-        class="text-2xl sm:text-3xl font-bold text-text dark:text-dark-text"
-      >
+  <!-- ── Selected Work ──────────────────────────────────────────────────── -->
+  <section aria-labelledby="work-heading" class="mx-auto max-w-5xl px-6 py-24">
+
+    <div class="flex items-baseline justify-between gap-4 mb-10 reveal">
+      <h2 id="work-heading" class="text-2xl sm:text-3xl font-bold text-text dark:text-dark-text">
         Selected Work
       </h2>
       <a
         href="/projects"
-        class="text-sm font-medium text-primary dark:text-dark-primary hover:text-primary-hover dark:hover:text-dark-primary-hover transition-colors duration-200 whitespace-nowrap"
+        class="text-sm font-medium text-primary dark:text-dark-primary hover:text-primary-hover dark:hover:text-dark-primary-hover transition-colors duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] whitespace-nowrap"
       >
         View all →
       </a>
     </div>
 
-    <!-- OTTER: sage-tinted background signals "featured" through color, not just size -->
+    <!-- OTTER — Double-Bezel featured card -->
     {hero && (
-      <article
-        class="mb-8 rounded-2xl bg-primary-muted dark:bg-dark-surface-alt border border-primary/25 dark:border-dark-primary/25 overflow-hidden fade-in"
-      >
-        <div class="p-8 sm:p-10">
-          <div class="flex flex-wrap items-center gap-2 mb-4">
-            <span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold uppercase tracking-wide bg-surface/80 dark:bg-dark-surface text-text dark:text-dark-primary border border-primary/30 dark:border-dark-primary/40">
-              Shipped
-            </span>
-            <span class="text-xs font-medium text-text-faint dark:text-dark-text-faint uppercase tracking-wide">
-              Featured
-            </span>
-          </div>
+      <div class="reveal mb-8 p-1.5 rounded-[1.75rem] ring-1 ring-primary/15 dark:ring-dark-primary/15 bg-primary/4 dark:bg-dark-primary/4 shadow-[0_24px_56px_-8px_rgba(168,195,176,0.15)] dark:shadow-[0_24px_56px_-8px_rgba(0,0,0,0.35)]">
+        <article class="rounded-[calc(1.75rem-0.375rem)] bg-primary-muted dark:bg-dark-surface-alt overflow-hidden">
+          <div class="p-8 sm:p-10">
 
-          <h3 class="text-2xl sm:text-3xl font-bold text-text dark:text-dark-text mb-1 leading-tight">
-            {hero.data.title}
-          </h3>
-          <p class="text-sm font-medium text-primary-hover dark:text-dark-primary mb-0.5">
-            {hero.data.role}
-          </p>
-          {hero.data.team && (
-            <p class="text-sm text-text-faint dark:text-dark-text-faint mb-4">
-              {hero.data.team}
-            </p>
-          )}
-
-          <p class="text-text-muted dark:text-dark-text-muted leading-relaxed mb-6 mt-3 max-w-2xl">
-            {hero.data.description}
-          </p>
-
-          <div class="flex flex-wrap gap-2 mb-8">
-            {hero.data.stack.map((s) => (
-              <span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-medium bg-surface/80 dark:bg-dark-surface text-text dark:text-dark-text border border-primary/20 dark:border-dark-border">
-                {s}
+            <div class="flex flex-wrap items-center gap-2 mb-5">
+              <span class="inline-flex items-center px-3 py-1 rounded-full bg-surface/80 dark:bg-dark-surface text-[10px] uppercase tracking-[0.15em] font-semibold text-primary-hover dark:text-dark-primary border border-primary/25 dark:border-dark-primary/30">
+                Shipped
               </span>
-            ))}
-          </div>
+              <span class="text-[10px] font-medium text-text-faint dark:text-dark-text-faint uppercase tracking-widest">
+                Featured
+              </span>
+            </div>
 
-          <div class="flex flex-wrap gap-3">
-            <!-- Fixed: was "See full case study" which misled to a list page -->
-            <a
-              href="/projects"
-              class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-accent hover:bg-accent-hover dark:bg-dark-accent dark:hover:bg-dark-accent-hover text-text font-semibold text-sm transition-colors duration-200"
-            >
-              View Projects
-            </a>
-            {hero.data.github && (
-              <a
-                href={hero.data.github}
-                target="_blank"
-                rel="noopener noreferrer"
-                class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg border border-primary/30 dark:border-dark-border text-sm font-medium text-text-muted dark:text-dark-text-muted hover:text-text dark:hover:text-dark-text hover:border-primary dark:hover:border-dark-primary transition-colors duration-200"
-              >
-                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844a9.59 9.59 0 0 1 2.504.337c1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.02 10.02 0 0 0 22 12.017C22 6.484 17.522 2 12 2z" />
-                </svg>
-                GitHub
-              </a>
+            <h3 class="text-2xl sm:text-3xl font-bold text-text dark:text-dark-text mb-1 leading-tight">
+              {hero.data.title}
+            </h3>
+            <p class="text-sm font-medium text-primary-hover dark:text-dark-primary mb-0.5">
+              {hero.data.role}
+            </p>
+            {hero.data.team && (
+              <p class="text-sm text-text-faint dark:text-dark-text-faint mb-4">{hero.data.team}</p>
             )}
+
+            <p class="text-text-muted dark:text-dark-text-muted leading-relaxed mb-6 mt-4 max-w-2xl">
+              {hero.data.description}
+            </p>
+
+            <div class="flex flex-wrap gap-2 mb-8">
+              {hero.data.stack.map((s) => (
+                <span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-medium bg-surface/80 dark:bg-dark-surface text-text dark:text-dark-text border border-primary/15 dark:border-dark-border">
+                  {s}
+                </span>
+              ))}
+            </div>
+
+            <div class="flex flex-wrap gap-3">
+              <a
+                href="/projects"
+                class="group inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-accent hover:bg-accent-hover dark:bg-dark-accent dark:hover:bg-dark-accent-hover text-text font-semibold text-sm active:scale-[0.98] transition-[transform,background-color] duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]"
+              >
+                View Projects
+                <span class="w-6 h-6 rounded-full bg-text/10 flex items-center justify-center group-hover:translate-x-0.5 group-hover:-translate-y-px transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]" aria-hidden="true">
+                  <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                  </svg>
+                </span>
+              </a>
+
+              {hero.data.github && (
+                <a
+                  href={hero.data.github}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-primary/25 dark:border-dark-border text-sm font-medium text-text-muted dark:text-dark-text-muted hover:text-text dark:hover:text-dark-text hover:border-primary dark:hover:border-dark-primary active:scale-[0.98] transition-[transform,color,border-color] duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]"
+                >
+                  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844a9.59 9.59 0 0 1 2.504.337c1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.02 10.02 0 0 0 22 12.017C22 6.484 17.522 2 12 2z" />
+                  </svg>
+                  GitHub
+                </a>
+              )}
+            </div>
+
           </div>
-        </div>
-      </article>
+        </article>
+      </div>
     )}
 
-    <!-- Grid: remaining projects — transition-all narrowed to transition-colors -->
+    <!-- Grid: remaining projects — Double-Bezel light -->
     {grid.length > 0 && (
-      <ul class="grid grid-cols-1 sm:grid-cols-2 gap-6 list-none p-0 m-0" role="list">
-        {grid.map((p) => (
-          <li class="fade-in flex">
-            <article class="flex flex-col flex-1 rounded-2xl border border-border dark:border-dark-border bg-surface dark:bg-dark-surface p-6 hover:border-primary dark:hover:border-dark-primary hover:shadow-md transition-colors duration-200">
-              <div class="flex items-start justify-between gap-3 mb-2">
-                <h3 class="text-lg font-bold text-text dark:text-dark-text leading-snug">
-                  {p.data.title}
-                </h3>
-                <span class="inline-block flex-shrink-0 px-2.5 py-0.5 rounded-full text-xs font-semibold uppercase tracking-wide bg-primary-muted dark:bg-dark-surface-alt text-text dark:text-dark-primary border border-primary dark:border-dark-primary">
-                  Shipped
-                </span>
-              </div>
+      <ul class="grid grid-cols-1 sm:grid-cols-2 gap-5 list-none p-0 m-0" role="list">
+        {grid.map((p, i) => (
+          <li class="reveal flex" style={`transition-delay: ${i * 80}ms`}>
+            <!-- Outer shell -->
+            <div class="flex-1 p-px rounded-[1.25rem] ring-1 ring-border/70 dark:ring-dark-border/50 shadow-[0_8px_24px_-4px_rgba(168,195,176,0.08)] dark:shadow-[0_8px_24px_-4px_rgba(0,0,0,0.25)]">
+              <!-- Inner core -->
+              <article class="flex flex-col h-full rounded-[calc(1.25rem-1px)] bg-surface dark:bg-dark-surface p-6 hover:bg-surface-alt/60 dark:hover:bg-dark-surface-alt transition-colors duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]">
 
-              <p class="text-sm text-text-muted dark:text-dark-text-muted leading-relaxed mb-auto">
-                {p.data.description}
-              </p>
+                <div class="flex items-start justify-between gap-3 mb-3">
+                  <h3 class="text-base font-bold text-text dark:text-dark-text leading-snug">
+                    {p.data.title}
+                  </h3>
+                  <span class="inline-flex flex-shrink-0 items-center px-2.5 py-0.5 rounded-full text-[10px] uppercase tracking-[0.12em] font-semibold bg-primary-muted dark:bg-dark-surface-alt text-primary-hover dark:text-dark-primary border border-primary/20 dark:border-dark-primary/30">
+                    Shipped
+                  </span>
+                </div>
 
-              <div class="flex flex-wrap gap-1.5 mt-5">
-                {p.data.stack.slice(0, 3).map((s) => (
-                  <span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-medium bg-surface-alt dark:bg-dark-surface-alt text-text dark:text-dark-text border border-border dark:border-dark-border">
-                    {s}
-                  </span>
-                ))}
-                {p.data.stack.length > 3 && (
-                  <span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-medium text-text-faint dark:text-dark-text-faint">
-                    +{p.data.stack.length - 3} more
-                  </span>
-                )}
-              </div>
-            </article>
+                <p class="text-sm text-text-muted dark:text-dark-text-muted leading-relaxed mb-auto">
+                  {p.data.description}
+                </p>
+
+                <div class="flex flex-wrap gap-1.5 mt-5">
+                  {p.data.stack.slice(0, 3).map((s) => (
+                    <span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-medium bg-surface-alt dark:bg-dark-surface-alt text-text dark:text-dark-text border border-border dark:border-dark-border">
+                      {s}
+                    </span>
+                  ))}
+                  {p.data.stack.length > 3 && (
+                    <span class="inline-block px-2 py-0.5 text-xs font-medium text-text-faint dark:text-dark-text-faint">
+                      +{p.data.stack.length - 3}
+                    </span>
+                  )}
+                </div>
+
+              </article>
+            </div>
           </li>
         ))}
       </ul>
     )}
-
-    <!-- Redundant bottom CTA removed — "View all →" in heading is sufficient -->
 
   </section>
 
 </BaseLayout>
 
 <style>
-  /* Subtle dot-grid gives the hero field texture without decoration */
+  /* ── Grain overlay ─────────────────────────────────────────────── */
+  /* Fixed + pointer-events-none per performance guardrails */
+  .grain {
+    position: fixed;
+    inset: -50%;
+    width: 200%;
+    height: 200%;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 220px 220px;
+    opacity: 0.022;
+    pointer-events: none;
+    z-index: 5;
+  }
+  .dark .grain { opacity: 0.038; }
+
+  /* ── Hero ambient orbs ─────────────────────────────────────────── */
+  .hero-orb-sage {
+    position: absolute;
+    top: -160px;
+    right: -180px;
+    width: 720px;
+    height: 720px;
+    border-radius: 50%;
+    background: radial-gradient(
+      circle at center,
+      oklch(82% 0.04 155 / 0.22) 0%,
+      oklch(82% 0.04 155 / 0.08) 45%,
+      transparent 70%
+    );
+    pointer-events: none;
+  }
+  .dark .hero-orb-sage {
+    background: radial-gradient(
+      circle at center,
+      oklch(64% 0.05 155 / 0.13) 0%,
+      oklch(64% 0.05 155 / 0.04) 45%,
+      transparent 70%
+    );
+  }
+
+  .hero-orb-peach {
+    position: absolute;
+    bottom: -120px;
+    left: -160px;
+    width: 560px;
+    height: 560px;
+    border-radius: 50%;
+    background: radial-gradient(
+      circle at center,
+      oklch(77% 0.08 45 / 0.16) 0%,
+      oklch(77% 0.08 45 / 0.05) 45%,
+      transparent 70%
+    );
+    pointer-events: none;
+  }
+  .dark .hero-orb-peach {
+    background: radial-gradient(
+      circle at center,
+      oklch(74% 0.08 45 / 0.09) 0%,
+      transparent 60%
+    );
+  }
+
+  /* ── Dot grid ──────────────────────────────────────────────────── */
   .hero-dots {
     position: absolute;
     inset: 0;
@@ -248,7 +428,6 @@ const stackGroups = [
     background-size: 28px 28px;
     pointer-events: none;
   }
-
   .dark .hero-dots {
     background-image: radial-gradient(
       circle,
@@ -257,7 +436,48 @@ const stackGroups = [
     );
   }
 
+  /* ── Reveal animations ─────────────────────────────────────────── */
+  /* GPU-safe: transform + opacity + filter only */
+  .reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    filter: blur(5px);
+    transition:
+      opacity    0.85s cubic-bezier(0.16, 1, 0.3, 1),
+      transform  0.85s cubic-bezier(0.16, 1, 0.3, 1),
+      filter     0.85s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .reveal.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+
+  /* ── Reduced motion ────────────────────────────────────────────── */
   @media (prefers-reduced-motion: reduce) {
-    /* No motion in hero; rule present for future additions */
+    .reveal {
+      opacity: 1;
+      transform: none;
+      filter: none;
+      transition: none;
+    }
+    .grain { display: none; }
   }
 </style>
+
+<script>
+  // Reveal observer — scoped to this page, isolated from BaseLayout's fade-in observer
+  const revealObserver = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    },
+    { threshold: 0.08 }
+  );
+
+  document.querySelectorAll('.reveal').forEach((el) => revealObserver.observe(el));
+</script>
