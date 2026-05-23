@@ -1,23 +1,92 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import ProjectFeatured from '../components/ProjectFeatured.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import ProjectModal from '../components/ProjectModal.astro';
 import { getCollection } from 'astro:content';
+import type { ProjectData } from '../scripts/modal';
 
-const allProjects = await getCollection('projects');
-const featured = allProjects
+const all = await getCollection('projects');
+const featured = all
   .filter((p) => p.data.featured)
   .sort((a, b) => a.data.order - b.data.order);
+
+// OTTER is always order: 1 and always gets the featured treatment
+const [hero, ...grid] = featured;
+
+function toProjectData(p: (typeof featured)[number]): ProjectData {
+  return {
+    title:       p.data.title,
+    description: p.data.description,
+    role:        p.data.role,
+    team:        p.data.team,
+    stack:       p.data.stack,
+    github:      p.data.github,
+    demo:        p.data.demo,
+    status:      p.data.status,
+    highlights:  p.data.highlights,
+    tpmNote:     p.data.tpmNote,
+  };
+}
 ---
 
-<BaseLayout title="Projects — Justin Park">
-  <section class="mx-auto max-w-5xl px-6 py-24">
-    <h1 class="text-3xl font-bold text-text dark:text-dark-text mb-8">Projects</h1>
-    <ul class="space-y-4" role="list">
-      {featured.map((p) => (
-        <li class="p-6 rounded-2xl border border-border dark:border-dark-border bg-surface dark:bg-dark-surface">
-          <h2 class="text-xl font-bold text-text dark:text-dark-text">{p.data.title}</h2>
-          <p class="text-text-muted dark:text-dark-text-muted mt-1">{p.data.description}</p>
-        </li>
-      ))}
-    </ul>
+<BaseLayout
+  title="Projects — Justin Park"
+  description="Projects by Justin Park: OTTER, FriendSync, OCR Form Parser, and more."
+>
+  <section class="mx-auto max-w-5xl px-6 py-20">
+
+    <!-- Heading -->
+    <div class="mb-12 fade-in">
+      <h1 class="text-3xl sm:text-4xl font-bold text-text dark:text-dark-text mb-3">
+        Projects
+      </h1>
+      <p class="text-text-muted dark:text-dark-text-muted max-w-xl">
+        Things I've shipped — from open-source desktop apps to AI/ML tooling and full-stack applications.
+      </p>
+    </div>
+
+    <!-- Featured project (OTTER) -->
+    {hero && (
+      <div class="mb-10 fade-in">
+        <ProjectFeatured
+          title={hero.data.title}
+          description={hero.data.description}
+          role={hero.data.role}
+          team={hero.data.team}
+          stack={hero.data.stack}
+          status={hero.data.status}
+          github={hero.data.github}
+          demo={hero.data.demo}
+          image={hero.data.image}
+          projectData={toProjectData(hero)}
+        />
+      </div>
+    )}
+
+    <!-- Grid of remaining projects -->
+    {grid.length > 0 && (
+      <ul
+        class="grid grid-cols-1 sm:grid-cols-2 gap-6 list-none m-0 p-0"
+        role="list"
+        aria-label="More projects"
+      >
+        {grid.map((p) => (
+          <li class="fade-in flex">
+            <ProjectCard
+              title={p.data.title}
+              description={p.data.description}
+              stack={p.data.stack}
+              status={p.data.status}
+              projectData={toProjectData(p)}
+            />
+          </li>
+        ))}
+      </ul>
+    )}
+
   </section>
+
+  <!-- Single modal instance shared by all project cards -->
+  <ProjectModal />
 </BaseLayout>
