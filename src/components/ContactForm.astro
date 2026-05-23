@@ -1,0 +1,263 @@
+---
+// ContactForm — client-side validation + Formspree submission.
+//
+// Setup:
+//   1. Create a free form at https://formspree.io
+//   2. Copy your form endpoint (looks like https://formspree.io/f/xxxxxxxx)
+//   3. Add to .env:  PUBLIC_FORMSPREE_ENDPOINT=https://formspree.io/f/xxxxxxxx
+//
+// Until the env var is set the form renders correctly but submissions will
+// 404. Everything else (validation, loading states, success message) works.
+const endpoint = import.meta.env.PUBLIC_FORMSPREE_ENDPOINT ?? '';
+---
+
+<form
+  id="contact-form"
+  novalidate
+  data-endpoint={endpoint}
+  class="space-y-6"
+  aria-label="Contact form"
+>
+  <!-- Name -->
+  <div>
+    <label
+      for="cf-name"
+      class="block text-sm font-medium text-text dark:text-dark-text mb-1.5"
+    >
+      Name <span class="text-accent dark:text-dark-accent" aria-hidden="true">*</span>
+    </label>
+    <input
+      id="cf-name"
+      name="name"
+      type="text"
+      autocomplete="name"
+      required
+      placeholder="Your name"
+      class="w-full px-4 py-2.5 rounded-lg border border-border dark:border-dark-border bg-surface dark:bg-dark-surface text-text dark:text-dark-text placeholder:text-text-faint dark:placeholder:text-dark-text-faint focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-dark-primary focus:border-transparent transition-colors duration-200"
+      aria-describedby="cf-name-error"
+      aria-required="true"
+    />
+    <p
+      id="cf-name-error"
+      role="alert"
+      class="hidden mt-1.5 text-xs text-red-600 dark:text-red-400"
+    ></p>
+  </div>
+
+  <!-- Email -->
+  <div>
+    <label
+      for="cf-email"
+      class="block text-sm font-medium text-text dark:text-dark-text mb-1.5"
+    >
+      Email <span class="text-accent dark:text-dark-accent" aria-hidden="true">*</span>
+    </label>
+    <input
+      id="cf-email"
+      name="email"
+      type="email"
+      autocomplete="email"
+      required
+      placeholder="you@example.com"
+      class="w-full px-4 py-2.5 rounded-lg border border-border dark:border-dark-border bg-surface dark:bg-dark-surface text-text dark:text-dark-text placeholder:text-text-faint dark:placeholder:text-dark-text-faint focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-dark-primary focus:border-transparent transition-colors duration-200"
+      aria-describedby="cf-email-error"
+      aria-required="true"
+    />
+    <p
+      id="cf-email-error"
+      role="alert"
+      class="hidden mt-1.5 text-xs text-red-600 dark:text-red-400"
+    ></p>
+  </div>
+
+  <!-- Message -->
+  <div>
+    <label
+      for="cf-message"
+      class="block text-sm font-medium text-text dark:text-dark-text mb-1.5"
+    >
+      Message <span class="text-accent dark:text-dark-accent" aria-hidden="true">*</span>
+    </label>
+    <textarea
+      id="cf-message"
+      name="message"
+      rows="5"
+      required
+      placeholder="What's on your mind?"
+      class="w-full px-4 py-2.5 rounded-lg border border-border dark:border-dark-border bg-surface dark:bg-dark-surface text-text dark:text-dark-text placeholder:text-text-faint dark:placeholder:text-dark-text-faint focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-dark-primary focus:border-transparent transition-colors duration-200 resize-y min-h-[120px]"
+      aria-describedby="cf-message-error"
+      aria-required="true"
+    ></textarea>
+    <p
+      id="cf-message-error"
+      role="alert"
+      class="hidden mt-1.5 text-xs text-red-600 dark:text-red-400"
+    ></p>
+  </div>
+
+  <!-- Submit -->
+  <div>
+    <button
+      id="cf-submit"
+      type="submit"
+      class="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-accent hover:bg-accent-hover dark:bg-dark-accent dark:hover:bg-dark-accent-hover text-text font-semibold text-sm transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-60 disabled:cursor-not-allowed"
+    >
+      <span id="cf-submit-label">Send Message</span>
+      <!-- Loading spinner (hidden by default) -->
+      <svg
+        id="cf-spinner"
+        class="hidden w-4 h-4 animate-spin"
+        fill="none"
+        viewBox="0 0 24 24"
+        aria-hidden="true"
+      >
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+      </svg>
+    </button>
+  </div>
+
+  <!-- Server-level error -->
+  <p
+    id="cf-server-error"
+    role="alert"
+    class="hidden text-sm text-red-600 dark:text-red-400 rounded-lg bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 px-4 py-3"
+  ></p>
+</form>
+
+<!-- Success message (hidden until submission) -->
+<div
+  id="cf-success"
+  class="hidden rounded-2xl border border-primary dark:border-dark-primary bg-primary-muted dark:bg-dark-surface-alt p-8 text-center"
+  role="status"
+  aria-live="polite"
+>
+  <div class="text-3xl mb-3" aria-hidden="true">✓</div>
+  <h3 class="text-lg font-bold text-text dark:text-dark-text mb-2">Message sent</h3>
+  <p class="text-text-muted dark:text-dark-text-muted text-sm">
+    Thanks for reaching out — I'll get back to you soon.
+  </p>
+</div>
+
+<script>
+  const form       = document.getElementById('contact-form') as HTMLFormElement;
+  const submitBtn  = document.getElementById('cf-submit')    as HTMLButtonElement;
+  const submitLbl  = document.getElementById('cf-submit-label')!;
+  const spinner    = document.getElementById('cf-spinner')!;
+  const successEl  = document.getElementById('cf-success')!;
+  const serverErr  = document.getElementById('cf-server-error')!;
+
+  // ── Validation helpers ────────────────────────────────────────────
+
+  function showError(fieldId: string, msg: string) {
+    const el = document.getElementById(`${fieldId}-error`)!;
+    el.textContent = msg;
+    el.classList.remove('hidden');
+    const input = document.getElementById(fieldId) as HTMLElement;
+    input.classList.add('border-red-400', 'dark:border-red-600');
+    input.setAttribute('aria-invalid', 'true');
+  }
+
+  function clearError(fieldId: string) {
+    const el = document.getElementById(`${fieldId}-error`)!;
+    el.textContent = '';
+    el.classList.add('hidden');
+    const input = document.getElementById(fieldId) as HTMLElement;
+    input.classList.remove('border-red-400', 'dark:border-red-600');
+    input.removeAttribute('aria-invalid');
+  }
+
+  function validate(): boolean {
+    let valid = true;
+
+    const name    = (document.getElementById('cf-name')    as HTMLInputElement).value.trim();
+    const email   = (document.getElementById('cf-email')   as HTMLInputElement).value.trim();
+    const message = (document.getElementById('cf-message') as HTMLTextAreaElement).value.trim();
+
+    clearError('cf-name');
+    clearError('cf-email');
+    clearError('cf-message');
+
+    if (!name) {
+      showError('cf-name', 'Name is required.');
+      valid = false;
+    }
+
+    if (!email) {
+      showError('cf-email', 'Email is required.');
+      valid = false;
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      showError('cf-email', 'Please enter a valid email address.');
+      valid = false;
+    }
+
+    if (!message) {
+      showError('cf-message', 'Message is required.');
+      valid = false;
+    } else if (message.length < 10) {
+      showError('cf-message', 'Message must be at least 10 characters.');
+      valid = false;
+    }
+
+    return valid;
+  }
+
+  // ── Live validation — clear error as user types ───────────────────
+
+  ['cf-name', 'cf-email', 'cf-message'].forEach((id) => {
+    document.getElementById(id)?.addEventListener('input', () => clearError(id));
+  });
+
+  // ── Submit ────────────────────────────────────────────────────────
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!validate()) return;
+
+    const endpoint = form.dataset.endpoint;
+    if (!endpoint) {
+      serverErr.textContent =
+        'Form submission is not configured yet. Please email me directly.';
+      serverErr.classList.remove('hidden');
+      return;
+    }
+
+    // Loading state
+    submitBtn.disabled = true;
+    submitLbl.textContent = 'Sending…';
+    spinner.classList.remove('hidden');
+    serverErr.classList.add('hidden');
+
+    const name    = (document.getElementById('cf-name')    as HTMLInputElement).value.trim();
+    const email   = (document.getElementById('cf-email')   as HTMLInputElement).value.trim();
+    const message = (document.getElementById('cf-message') as HTMLTextAreaElement).value.trim();
+
+    try {
+      const res = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({ name, email, message }),
+      });
+
+      if (res.ok) {
+        form.classList.add('hidden');
+        successEl.classList.remove('hidden');
+        successEl.focus();
+      } else {
+        const data = await res.json().catch(() => ({}));
+        const msg = (data as { error?: string }).error ?? 'Something went wrong. Please try again.';
+        serverErr.textContent = msg;
+        serverErr.classList.remove('hidden');
+        submitBtn.disabled = false;
+        submitLbl.textContent = 'Send Message';
+        spinner.classList.add('hidden');
+      }
+    } catch {
+      serverErr.textContent = 'Network error — please check your connection and try again.';
+      serverErr.classList.remove('hidden');
+      submitBtn.disabled = false;
+      submitLbl.textContent = 'Send Message';
+      spinner.classList.add('hidden');
+    }
+  });
+</script>

@@ -1,28 +1,234 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const allProjects = await getCollection('projects');
+const featured = allProjects
+  .filter((p) => p.data.featured)
+  .sort((a, b) => a.data.order - b.data.order);
+
+const [hero, ...grid] = featured;
+
+// Core stack shown in the skills strip — most recognizable / differentiating
+const coreSkills = [
+  { label: 'React',          group: 'frontend' },
+  { label: 'Electron',       group: 'frontend' },
+  { label: 'TypeScript',     group: 'frontend' },
+  { label: 'Tailwind CSS',   group: 'frontend' },
+  { label: 'Python',         group: 'backend'  },
+  { label: 'PostgreSQL',     group: 'backend'  },
+  { label: 'Node.js',        group: 'backend'  },
+  { label: 'Claude API',     group: 'ai'       },
+  { label: 'Anthropic SDK',  group: 'ai'       },
+  { label: 'AWS',            group: 'infra'    },
+  { label: 'Docker',         group: 'infra'    },
+  { label: 'GitHub Actions', group: 'infra'    },
+] as const;
 ---
 
-<BaseLayout title="Justin Park — Software Engineer">
-  <section class="mx-auto max-w-5xl px-6 py-24 text-center">
-    <h1 class="text-4xl sm:text-5xl font-bold text-text dark:text-dark-text mb-4">
+<BaseLayout
+  title="Justin Park — Software Engineer"
+  description="Software engineer building developer tools and AI-assisted products. React, Electron, TypeScript, Python, Claude API."
+>
+
+  <!-- ── Hero ──────────────────────────────────────────────────────── -->
+  <section
+    aria-label="Introduction"
+    class="mx-auto max-w-5xl px-6 pt-28 pb-20 sm:pt-36 sm:pb-24"
+  >
+    <p class="text-sm font-semibold uppercase tracking-widest text-primary dark:text-dark-primary mb-4">
+      Available for new roles
+    </p>
+
+    <h1 class="text-5xl sm:text-6xl lg:text-7xl font-bold text-text dark:text-dark-text leading-[1.08] tracking-tight mb-6">
       Justin Park
     </h1>
-    <p class="text-xl text-text-muted dark:text-dark-text-muted mb-8">
+
+    <p class="text-xl sm:text-2xl text-text-muted dark:text-dark-text-muted max-w-2xl leading-relaxed mb-10">
       Software engineer building developer tools and AI-assisted products.
     </p>
-    <div class="flex justify-center gap-4 flex-wrap">
+
+    <div class="flex flex-wrap gap-4">
       <a
         href="/projects"
-        class="px-6 py-3 rounded-lg bg-accent hover:bg-accent-hover dark:bg-dark-accent dark:hover:bg-dark-accent-hover text-text font-semibold transition-colors duration-200"
+        class="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-accent hover:bg-accent-hover dark:bg-dark-accent dark:hover:bg-dark-accent-hover text-text font-semibold transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
       >
         View Projects
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+        </svg>
       </a>
       <a
         href="/contact"
-        class="px-6 py-3 rounded-lg border border-border dark:border-dark-border text-text-muted dark:text-dark-text-muted hover:text-text dark:hover:text-dark-text hover:border-primary dark:hover:border-dark-primary transition-colors duration-200"
+        class="inline-flex items-center gap-2 px-6 py-3 rounded-lg border border-border dark:border-dark-border text-text-muted dark:text-dark-text-muted hover:text-text dark:hover:text-dark-text hover:border-primary dark:hover:border-dark-primary font-semibold transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
       >
         Contact Me
       </a>
     </div>
   </section>
+
+  <!-- ── Skills strip ──────────────────────────────────────────────── -->
+  <section
+    aria-labelledby="skills-heading"
+    class="border-y border-border dark:border-dark-border bg-surface-alt dark:bg-dark-surface-alt py-10"
+  >
+    <div class="mx-auto max-w-5xl px-6">
+      <p
+        id="skills-heading"
+        class="text-xs font-semibold uppercase tracking-widest text-text-faint dark:text-dark-text-faint mb-5"
+      >
+        Core Stack
+      </p>
+      <div class="flex flex-wrap gap-2" role="list" aria-label="Core technologies">
+        {coreSkills.map(({ label, group }) => (
+          <span
+            role="listitem"
+            class:list={[
+              'inline-block px-3 py-1 rounded-full text-sm font-medium border transition-colors duration-200',
+              group === 'ai'
+                ? 'bg-primary-muted dark:bg-dark-surface-alt text-text dark:text-dark-text border-primary/40 dark:border-dark-primary/40'
+                : 'bg-surface dark:bg-dark-surface text-text dark:text-dark-text border-border dark:border-dark-border',
+            ]}
+          >
+            {label}
+          </span>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Featured work preview ─────────────────────────────────────── -->
+  <section
+    aria-labelledby="work-heading"
+    class="mx-auto max-w-5xl px-6 py-20"
+  >
+    <div class="flex items-baseline justify-between gap-4 mb-10 fade-in">
+      <h2
+        id="work-heading"
+        class="text-2xl sm:text-3xl font-bold text-text dark:text-dark-text"
+      >
+        Selected Work
+      </h2>
+      <a
+        href="/projects"
+        class="text-sm font-medium text-primary dark:text-dark-primary hover:text-primary-hover dark:hover:text-dark-primary-hover transition-colors duration-200 whitespace-nowrap"
+      >
+        View all →
+      </a>
+    </div>
+
+    <!-- OTTER — large featured preview -->
+    {hero && (
+      <article class="mb-8 rounded-2xl border border-border dark:border-dark-border bg-surface dark:bg-dark-surface overflow-hidden fade-in">
+        <div class="p-8 sm:p-10">
+          <div class="flex flex-wrap items-center gap-2 mb-4">
+            <span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold uppercase tracking-wide bg-primary-muted dark:bg-dark-surface-alt text-text dark:text-dark-primary border border-primary dark:border-dark-primary">
+              Shipped
+            </span>
+            <span class="text-xs font-medium text-text-faint dark:text-dark-text-faint uppercase tracking-wide">
+              Featured
+            </span>
+          </div>
+
+          <h3 class="text-2xl sm:text-3xl font-bold text-text dark:text-dark-text mb-1 leading-tight">
+            {hero.data.title}
+          </h3>
+          <p class="text-sm font-medium text-primary dark:text-dark-primary mb-0.5">
+            {hero.data.role}
+          </p>
+          {hero.data.team && (
+            <p class="text-sm text-text-faint dark:text-dark-text-faint mb-4">
+              {hero.data.team}
+            </p>
+          )}
+
+          <p class="text-text-muted dark:text-dark-text-muted leading-relaxed mb-6 mt-3 max-w-2xl">
+            {hero.data.description}
+          </p>
+
+          <div class="flex flex-wrap gap-2 mb-8">
+            {hero.data.stack.map((s) => (
+              <span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-medium bg-surface-alt dark:bg-dark-surface-alt text-text dark:text-dark-text border border-border dark:border-dark-border">
+                {s}
+              </span>
+            ))}
+          </div>
+
+          <div class="flex flex-wrap gap-3">
+            <a
+              href="/projects"
+              class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-accent hover:bg-accent-hover dark:bg-dark-accent dark:hover:bg-dark-accent-hover text-text font-semibold text-sm transition-colors duration-200"
+            >
+              See full case study
+            </a>
+            {hero.data.github && (
+              <a
+                href={hero.data.github}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg border border-border dark:border-dark-border text-sm font-medium text-text-muted dark:text-dark-text-muted hover:text-text dark:hover:text-dark-text hover:border-primary dark:hover:border-dark-primary transition-colors duration-200"
+              >
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844a9.59 9.59 0 0 1 2.504.337c1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.02 10.02 0 0 0 22 12.017C22 6.484 17.522 2 12 2z" />
+                </svg>
+                GitHub
+              </a>
+            )}
+          </div>
+        </div>
+      </article>
+    )}
+
+    <!-- Grid: remaining featured projects -->
+    {grid.length > 0 && (
+      <ul class="grid grid-cols-1 sm:grid-cols-2 gap-6 list-none p-0 m-0" role="list">
+        {grid.map((p) => (
+          <li class="fade-in flex">
+            <article class="flex flex-col flex-1 rounded-2xl border border-border dark:border-dark-border bg-surface dark:bg-dark-surface p-6 hover:border-primary dark:hover:border-dark-primary hover:shadow-md transition-all duration-200">
+              <div class="flex items-start justify-between gap-3 mb-2">
+                <h3 class="text-lg font-bold text-text dark:text-dark-text leading-snug">
+                  {p.data.title}
+                </h3>
+                <span class="inline-block flex-shrink-0 px-2.5 py-0.5 rounded-full text-xs font-semibold uppercase tracking-wide bg-primary-muted dark:bg-dark-surface-alt text-text dark:text-dark-primary border border-primary dark:border-dark-primary">
+                  Shipped
+                </span>
+              </div>
+
+              <p class="text-sm text-text-muted dark:text-dark-text-muted leading-relaxed mb-auto">
+                {p.data.description}
+              </p>
+
+              <div class="flex flex-wrap gap-1.5 mt-5">
+                {p.data.stack.slice(0, 3).map((s) => (
+                  <span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-medium bg-surface-alt dark:bg-dark-surface-alt text-text dark:text-dark-text border border-border dark:border-dark-border">
+                    {s}
+                  </span>
+                ))}
+                {p.data.stack.length > 3 && (
+                  <span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-medium text-text-faint dark:text-dark-text-faint">
+                    +{p.data.stack.length - 3} more
+                  </span>
+                )}
+              </div>
+            </article>
+          </li>
+        ))}
+      </ul>
+    )}
+
+    <!-- Bottom CTA -->
+    <div class="mt-10 text-center fade-in">
+      <a
+        href="/projects"
+        class="inline-flex items-center gap-2 px-6 py-3 rounded-lg border border-border dark:border-dark-border text-text-muted dark:text-dark-text-muted hover:text-text dark:hover:text-dark-text hover:border-primary dark:hover:border-dark-primary font-medium transition-colors duration-200"
+      >
+        View all projects with full details
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+        </svg>
+      </a>
+    </div>
+
+  </section>
+
 </BaseLayout>
