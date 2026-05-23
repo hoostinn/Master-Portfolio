@@ -1,0 +1,94 @@
+---
+import '../styles/global.css';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import ThemeToggle from '../components/ThemeToggle.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+  ogImage?: string;
+}
+
+const {
+  title,
+  description = 'Justin Park — Software engineer building developer tools and AI-assisted products.',
+  ogImage = '/assets/og-default.png',
+} = Astro.props;
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+---
+
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+
+    <!-- Canonical -->
+    <link rel="canonical" href={canonicalURL} />
+
+    <!-- Open Graph -->
+    <meta property="og:type"        content="website" />
+    <meta property="og:url"         content={canonicalURL} />
+    <meta property="og:title"       content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image"       content={ogImage} />
+
+    <!-- Twitter -->
+    <meta name="twitter:card"        content="summary_large_image" />
+    <meta name="twitter:title"       content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image"       content={ogImage} />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+
+    <!-- Font preload -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <title>{title}</title>
+
+    <!-- Theme — must run before first paint to avoid flash -->
+    <script is:inline>
+      (function () {
+        const stored      = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (stored === 'dark' || (!stored && prefersDark)) {
+          document.documentElement.classList.add('dark');
+        }
+      })();
+    </script>
+  </head>
+
+  <body class="min-h-screen flex flex-col bg-bg dark:bg-dark-bg text-text dark:text-dark-text antialiased">
+    <Nav>
+      <ThemeToggle slot="theme-toggle" />
+    </Nav>
+
+    <main id="main-content" class="flex-1">
+      <slot />
+    </main>
+
+    <Footer />
+
+    <!-- Scroll-triggered fade-in observer -->
+    <script>
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('visible');
+              observer.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.1 }
+      );
+
+      document.querySelectorAll('.fade-in').forEach((el) => observer.observe(el));
+    </script>
+  </body>
+</html>

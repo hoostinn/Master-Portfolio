@@ -1,0 +1,28 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Justin Park — Software Engineer">
+  <section class="mx-auto max-w-5xl px-6 py-24 text-center">
+    <h1 class="text-4xl sm:text-5xl font-bold text-text dark:text-dark-text mb-4">
+      Justin Park
+    </h1>
+    <p class="text-xl text-text-muted dark:text-dark-text-muted mb-8">
+      Software engineer building developer tools and AI-assisted products.
+    </p>
+    <div class="flex justify-center gap-4 flex-wrap">
+      <a
+        href="/projects"
+        class="px-6 py-3 rounded-lg bg-accent hover:bg-accent-hover dark:bg-dark-accent dark:hover:bg-dark-accent-hover text-text font-semibold transition-colors duration-200"
+      >
+        View Projects
+      </a>
+      <a
+        href="/contact"
+        class="px-6 py-3 rounded-lg border border-border dark:border-dark-border text-text-muted dark:text-dark-text-muted hover:text-text dark:hover:text-dark-text hover:border-primary dark:hover:border-dark-primary transition-colors duration-200"
+      >
+        Contact Me
+      </a>
+    </div>
+  </section>
+</BaseLayout>

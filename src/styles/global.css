@@ -1,0 +1,49 @@
+/* ── Google Font import — must precede all other statements ─────────── */
+@import url('https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Base resets ────────────────────────────────────────────────────── */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    font-family: 'Atkinson Hyperlegible', system-ui, sans-serif;
+  }
+
+  body {
+    @apply bg-bg text-text;
+    line-height: 1.6;
+  }
+
+  .dark body {
+    @apply bg-dark-bg text-dark-text;
+  }
+
+  *:focus-visible {
+    @apply outline-2 outline-offset-2 outline-accent;
+  }
+
+  /* Reduced motion — override every animation/transition */
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation: none !important;
+      transition: none !important;
+    }
+  }
+}
+
+/* ── Scroll-triggered fade-in ──────────────────────────────────────── */
+@layer utilities {
+  .fade-in {
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out;
+  }
+
+  .fade-in.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

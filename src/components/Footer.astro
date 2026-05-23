@@ -1,0 +1,44 @@
+---
+const year = new Date().getFullYear();
+---
+
+<footer class="border-t border-border dark:border-dark-border bg-surface dark:bg-dark-surface mt-auto">
+  <div class="mx-auto max-w-5xl px-6 py-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+    <p class="text-sm text-text-faint dark:text-dark-text-faint">
+      &copy; {year} Justin Park
+    </p>
+
+    <nav aria-label="Social links">
+      <ul class="flex items-center gap-6 list-none m-0 p-0" role="list">
+        <li>
+          <a
+            href="mailto:justin.jpark4@gmail.com"
+            class="text-sm text-text-muted dark:text-dark-text-muted hover:text-accent dark:hover:text-dark-accent transition-colors duration-200"
+          >
+            Email
+          </a>
+        </li>
+        <li>
+          <a
+            href="https://github.com/OTTER-Capstone-ORG/OTTER"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-sm text-text-muted dark:text-dark-text-muted hover:text-accent dark:hover:text-dark-accent transition-colors duration-200"
+          >
+            GitHub
+          </a>
+        </li>
+        <li>
+          <a
+            href="https://linkedin.com/in/justinjpark"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-sm text-text-muted dark:text-dark-text-muted hover:text-accent dark:hover:text-dark-accent transition-colors duration-200"
+          >
+            LinkedIn
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</footer>
