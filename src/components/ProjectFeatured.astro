@@ -91,11 +91,11 @@ const serialized = JSON.stringify(projectData);
 
     <!-- Screenshot -->
     {image && (
-      <div class="lg:w-80 xl:w-96 flex-shrink-0 bg-surface-alt dark:bg-dark-surface-alt flex items-center justify-center overflow-hidden">
+      <div class="lg:w-80 xl:w-96 flex-shrink-0 bg-surface-alt dark:bg-dark-surface-alt flex items-center justify-center p-4">
         <img
           src={image}
           alt={`${title} screenshot`}
-          class="w-full h-full object-cover object-top"
+          class="w-full h-auto object-contain rounded-lg"
           loading="lazy"
         />
       </div>
